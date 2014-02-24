@@ -99,7 +99,9 @@
 
       var providerMap = {
         gist: function(options) {
-          console.log('TODO', 'gist from', options.id);
+          configFromGist(options.id, function(config) {
+            renderMap(config);
+          });
         },
 
         path: function(options) {
@@ -120,7 +122,7 @@
       }
 
       function parseQueryString(queryString) {
-        var gistMatch = queryString.match(/^\?gist=(\d+)$/);
+        var gistMatch = queryString.match(/^\?gist=(.+)$/);
         if(gistMatch) { return {provider: 'gist', id: gistMatch[1]}; }
         var pathMatch = queryString.match(/^\?path=(.+)$/);
         if(pathMatch) { return {provider: 'path', path: pathMatch[1]}; }
@@ -133,7 +135,7 @@
           url: 'https://api.github.com/gists/' + id,
           dataType: 'jsonp',
           success: function(resp) {
-            return JSON.parse(resp.data.files['map.json'].content);
+            callback(JSON.parse(resp.data.files['map.json'].content));
           }
         });
       }
