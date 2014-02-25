@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css">
     <style>
       html, body, #map { height: 100%; margin: 0; }
+      .properties { border-collapse: collapse; }
+      .properties th, .properties td { border: 1px solid #eee; padding: 3px; }
     </style>
   </head>
 
@@ -19,6 +21,17 @@
     <script>
     (function() {
       'use strict';
+
+      function renderPropertiesTable(properties) {
+        var table = $('<table class="properties">');
+        _.forEach(properties, function(value, key) {
+          $('<tr>').appendTo(table).append(
+            $('<th>').text(key),
+            $('<td>').text(value)
+          );
+        });
+        return $('<div>').append(table).html();
+      }
 
       var dataType = {
           googleSpreadsheet: function(layerConfig, callback) {
@@ -66,6 +79,13 @@
               };
             }
           });
+
+          layer.on('click', function(evt) {
+            var html = renderPropertiesTable(evt.layer.feature.properties);
+            var latlng = evt.layer.getBounds().getCenter();
+            L.popup().setLatLng(latlng).setContent(html).openOn(map);
+          });
+
           layer.addTo(map);
 
           var dataHandler = dataType[layerConfig.data.type];
