@@ -1,0 +1,24 @@
+{
+  "layers": [
+    {
+      "type": "osm"
+    },
+    {
+      "type": "choropleth",
+      "features": "https://dl.dropboxusercontent.com/s/mfgboa9jtnxkkt0/uat.topojson",
+      "data": {
+          "type": "googleSpreadsheet",
+          "key": "0AlBmcLkxpBOXdEdOVUdCY2hqN2ExRmRtdG13SUNSQnc"
+      },
+      "join": {
+        "featureProperty": "code",
+        "dataKey": "code",
+        "dataValue": "value"
+      },
+      "colorRange": {
+        "min": {"color": "#858", "value": 5},
+        "max": {"color": "#8f8", "value": 15}
+      }
+    }
+  ]
+}
