@@ -16,7 +16,7 @@
         "dataValue": "births1000"
       },
       "colorRange": {
-        "min": {"color": "#888", "value": 5},
+        "min": {"color": "#858", "value": 5},
         "max": {"color": "#8f8", "value": 15}
       }
     }
