@@ -70,7 +70,7 @@
           var layer = L.geoJson([], {
             style: function(feature) {
               var code = feature.properties[layerConfig.join.featureProperty];
-              var row = data[code];
+              var row = data[code] || {};
               var value = parseFloat(row[layerConfig.join.dataValue]);
               return {
                 weight: 1,
