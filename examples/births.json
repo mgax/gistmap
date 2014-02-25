@@ -5,7 +5,7 @@
     },
     {
       "type": "choropleth",
-      "features": "examples/judete.topojson",
+      "features": "https://dl.dropboxusercontent.com/s/qsg4n1kg8bkqfhi/judete.topojson",
       "data": {
           "type": "googleSpreadsheet",
           "key": "0AlBmcLkxpBOXdEEzSE1HWTdWeGYxTG9ja0l4c2VyRHc"
