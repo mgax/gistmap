@@ -20,6 +20,25 @@
     (function() {
       'use strict';
 
+      var dataType = {
+          googleSpreadsheet: function(layerConfig, callback) {
+            Tabletop.init({
+              key: layerConfig.data.key,
+              simpleSheet: true,
+              callback: function(row_list) {
+                var data = {};
+                _.forEach(row_list, function(row) {
+                  var value = parseFloat(row[layerConfig.join.dataValue]);
+                  var key = row[layerConfig.join.dataKey];
+                  data[key] = value;
+                });
+
+                callback(data);
+              }
+            });
+          }
+      };
+
       var layerRender = {
         osm: function(map) {
           L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
@@ -34,7 +53,7 @@
               .domain([colorRange.min.value, colorRange.max.value])
               .range([colorRange.min.color, colorRange.max.color])
               .interpolate(d3.interpolateLab);
-          var data = {};
+          var data;
 
           var layer = L.geoJson([], {
             style: function(feature) {
@@ -49,39 +68,21 @@
           });
           layer.addTo(map);
 
-          var googleMatch = layerConfig.data.match(/^google-spreadsheet (.+)$/);
-          if(googleMatch) {
-            var spreadsheetKey = googleMatch[1];
-            Tabletop.init({
-              key: spreadsheetKey,
-              simpleSheet: true,
-              callback: function(row_list) {
-                _.forEach(row_list, function(row) {
-                  var value = parseFloat(row[layerConfig.join.dataValue]);
-                  var key = row[layerConfig.join.dataKey];
-                  data[key] = value;
-                });
+          var dataHandler = dataType[layerConfig.data.type];
+          if(! dataHandler) {
+            console.log("Unknown data source", layerConfig.data.type);
+          }
 
-                $.getJSON(layerConfig.features, function(resp) {
-                  var coll = topojson.feature(resp, _.values(resp.objects)[0]);
-                  layer.addData(coll.features);
-                  map.fitBounds(layer.getBounds());
-                });
-              }
+          dataHandler(layerConfig, function(resp) {
+            data = resp;
+            $.getJSON(layerConfig.features, function(resp) {
+              var coll = topojson.feature(resp, _.values(resp.objects)[0]);
+              layer.addData(coll.features);
+              map.fitBounds(layer.getBounds());
             });
-          }
-          else {
-            console.log("Can't understand data source", layerConfig.data);
-            return;
-          }
+          });
         }
       };
-
-      function renderLayer(map, layerConfig) {
-        if(layerConfig.type == 'osm') {
-          renderOsmLayer(map);
-        }
-      }
 
       function renderMap(config) {
         var map = L.map('map');

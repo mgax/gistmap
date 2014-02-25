@@ -6,7 +6,10 @@
     {
       "type": "choropleth",
       "features": "examples/judete.topojson",
-      "data": "google-spreadsheet 0AlBmcLkxpBOXdEEzSE1HWTdWeGYxTG9ja0l4c2VyRHc",
+      "data": {
+          "type": "googleSpreadsheet",
+          "key": "0AlBmcLkxpBOXdEEzSE1HWTdWeGYxTG9ja0l4c2VyRHc"
+      },
       "join": {
         "featureProperty": "code",
         "dataKey": "code",
