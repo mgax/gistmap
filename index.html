@@ -3,24 +3,38 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.22.0/codemirror.css">
     <style>
       html, body, #map { height: 100%; margin: 0; }
       .properties { border-collapse: collapse; }
       .properties th, .properties td { border: 1px solid #eee; padding: 3px; }
+      #devel-box { display: none; }
+      .devel #devel-box { display: block; background: #eee;
+          position: absolute; bottom: 10px; left: 10px; width: 40%; }
     </style>
   </head>
 
   <body>
     <div id="map"></div>
+    <div id="devel-box">
+      <button id="devel-apply">apply</button>
+      <span id="devel-message"></span>
+      <div id="devel-code"></div>
+    </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.2/leaflet.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.1/d3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.1.0/tabletop.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.22.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.22.0/mode/javascript/javascript.min.js"></script>
     <script>
     (function() {
       'use strict';
+
+      var editor = null;
+      var map = null;
 
       function renderPropertiesTable(properties) {
         var table = $('<table class="properties">');
@@ -107,7 +121,15 @@
       };
 
       function renderMap(config) {
-        var map = L.map('map');
+        if(editor) {
+          editor.setValue(JSON.stringify(config, null, '  '));
+        }
+
+        if(map) {
+          map.remove();
+        }
+
+        map = L.map('map');
 
         _.forEach(config.layers, function(layerConfig) {
           var renderFunction = layerRender[layerConfig.type];
@@ -145,6 +167,26 @@
         else {
           console.log("Could not match a provider", args);
         }
+        if(args.devel) {
+          createDevelMenu();
+        }
+      }
+
+      function createDevelMenu() {
+        $('body').addClass('devel');
+        editor = CodeMirror($('#devel-code')[0], {mode: "application/json"});
+        $('#devel-apply').click(function(evt) {
+          evt.preventDefault();
+          try {
+            var config = JSON.parse(editor.getValue());
+          }
+          catch(e) {
+            $('#devel-message').text("JSON parse error: " + e.message);
+            return;
+          }
+          $('#devel-message').text('');
+          renderMap(config);
+        });
       }
 
       function configFromGist(id, callback) {
