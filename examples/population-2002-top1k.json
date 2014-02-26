@@ -1,0 +1,18 @@
+{
+  "layers": [
+    {
+      "type": "osm"
+    },
+    {
+      "type": "bubble",
+      "features": "https://dl.dropboxusercontent.com/s/3718h4vi5bk5alm/localitati.geojson",
+      "data": {
+          "type": "googleSpreadsheet",
+          "key": "0AlBmcLkxpBOXdEZHd05HOGRzU3d6OHk4MG00RV9ySVE"
+      },
+      "dataColumn": "population2002",
+      "color": "#008",
+      "scale": 0.001
+    }
+  ]
+}

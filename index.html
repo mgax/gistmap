@@ -152,6 +152,37 @@
               map.fitBounds(layer.getBounds());
             });
           });
+        },
+
+        bubble: function(map, layerConfig) {
+          getData(layerConfig.data, function(resp) {
+            var data = resp;
+            var bounds = null;
+            fetchJson(layerConfig.features, function(resp) {
+              _.forEach(resp.features, function(feature) {
+                var id = feature.properties.id;
+                if(data[id]) {
+                  var value = data[id][layerConfig.dataColumn];
+                  var radius = 50000 * layerConfig.scale * Math.sqrt(value);
+                  var coord = feature.geometry.coordinates;
+                  var latLng = L.latLng([coord[1], coord[0]]);
+                  var circle = L.circle(latLng, radius, {
+                    weight: 1,
+                    color: layerConfig.color,
+                    fillColor: layerConfig.color
+                  });
+                  if(! bounds) {
+                    bounds = L.latLngBounds([latLng, latLng]);
+                  }
+                  else {
+                    bounds.extend(latLng);
+                  }
+                  circle.addTo(map);
+                }
+              });
+              map.fitBounds(bounds);
+            });
+          });
         }
       };
 
