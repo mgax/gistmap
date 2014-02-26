@@ -35,6 +35,7 @@
 
       var editor = null;
       var map = null;
+      var cache = {};
 
       function renderPropertiesTable(properties) {
         var table = $('<table class="properties">');
@@ -47,20 +48,51 @@
         return $('<div>').append(table).html();
       }
 
+      function fetchGoogleSpreadsheet(key, callback) {
+        var cacheKey = 'tabletop-' + key;
+        if(cache[cacheKey]) { callback(cache[cacheKey]); return; }
+        Tabletop.init({
+          key: key,
+          simpleSheet: true,
+          callback: function(data) {
+            cache[cacheKey] = data;
+            callback(data);
+          }
+        });
+      }
+
+      function fetchJson(url, callback) {
+        var cacheKey = 'json-' + url;
+        if(cache[cacheKey]) { callback(cache[cacheKey]); return; }
+        $.getJSON(url, function(data) {
+          cache[cacheKey] = data;
+          callback(data);
+        });
+      }
+
+      function fetchGist(id, callback) {
+        var cacheKey = 'gist-' + id;
+        if(cache[cacheKey]) { callback(cache[cacheKey]); return; }
+        $.ajax({
+          type: 'GET',
+          url: 'https://api.github.com/gists/' + id,
+          dataType: 'jsonp',
+          success: function(data) {
+            cache[cacheKey] = data;
+            callback(data);
+          }
+        });
+      }
+
       var dataType = {
           googleSpreadsheet: function(layerConfig, callback) {
-            Tabletop.init({
-              key: layerConfig.data.key,
-              simpleSheet: true,
-              callback: function(row_list) {
-                var data = {};
-                _.forEach(row_list, function(row) {
-                  var key = row.id;
-                  data[key] = row;
-                });
-
-                callback(data);
-              }
+            fetchGoogleSpreadsheet(layerConfig.data.key, function(row_list) {
+              var data = {};
+              _.forEach(row_list, function(row) {
+                var key = row.id;
+                data[key] = row;
+              });
+              callback(data);
             });
           }
       };
@@ -111,7 +143,7 @@
 
           dataHandler(layerConfig, function(resp) {
             data = resp;
-            $.getJSON(layerConfig.features, function(resp) {
+            fetchJson(layerConfig.features, function(resp) {
               var coll = topojson.feature(resp, _.values(resp.objects)[0]);
               layer.addData(coll.features);
               map.fitBounds(layer.getBounds());
@@ -190,13 +222,8 @@
       }
 
       function configFromGist(id, callback) {
-        $.ajax({
-          type: 'GET',
-          url: 'https://api.github.com/gists/' + id,
-          dataType: 'jsonp',
-          success: function(resp) {
-            callback(JSON.parse(resp.data.files['map.json'].content));
-          }
+        fetchGist(id, function(gist) {
+          callback(JSON.parse(gist.data.files['map.json'].content));
         });
       }
 
