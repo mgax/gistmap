@@ -85,8 +85,8 @@
       }
 
       var dataType = {
-          googleSpreadsheet: function(layerConfig, callback) {
-            fetchGoogleSpreadsheet(layerConfig.data.key, function(row_list) {
+          googleSpreadsheet: function(dataConfig, callback) {
+            fetchGoogleSpreadsheet(dataConfig.key, function(row_list) {
               var data = {};
               _.forEach(row_list, function(row) {
                 var key = row.id;
@@ -96,6 +96,14 @@
             });
           }
       };
+
+      function getData(dataConfig, callback) {
+        var dataHandler = dataType[dataConfig.type];
+        if(! dataHandler) {
+          console.log("Unknown data source", dataConfig.type);
+        }
+        dataHandler(dataConfig, callback);
+      }
 
       var layerRender = {
         osm: function(map) {
@@ -136,12 +144,7 @@
 
           layer.addTo(map);
 
-          var dataHandler = dataType[layerConfig.data.type];
-          if(! dataHandler) {
-            console.log("Unknown data source", layerConfig.data.type);
-          }
-
-          dataHandler(layerConfig, function(resp) {
+          getData(layerConfig.data, function(resp) {
             data = resp;
             fetchJson(layerConfig.features, function(resp) {
               var coll = topojson.feature(resp, _.values(resp.objects)[0]);
