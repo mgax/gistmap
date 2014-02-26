@@ -41,7 +41,7 @@
               callback: function(row_list) {
                 var data = {};
                 _.forEach(row_list, function(row) {
-                  var key = row[layerConfig.join.dataKey];
+                  var key = row.id;
                   data[key] = row;
                 });
 
@@ -69,9 +69,9 @@
 
           var layer = L.geoJson([], {
             style: function(feature) {
-              var code = feature.properties[layerConfig.join.featureProperty];
+              var code = feature.properties.id;
               var row = data[code] || {};
-              var value = parseFloat(row[layerConfig.join.dataValue]);
+              var value = parseFloat(row[layerConfig.dataColumn]);
               return {
                 weight: 1,
                 fillColor: color(value),
@@ -82,7 +82,7 @@
 
           layer.on('click', function(evt) {
             var properties = evt.layer.feature.properties;
-            var code = properties[layerConfig.join.featureProperty];
+            var code = properties.id;
             var html = renderPropertiesTable(data[code]);
             var latlng = evt.layer.getBounds().getCenter();
             L.popup().setLatLng(latlng).setContent(html).openOn(map);

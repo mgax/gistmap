@@ -10,11 +10,7 @@
           "type": "googleSpreadsheet",
           "key": "0AlBmcLkxpBOXdEEzSE1HWTdWeGYxTG9ja0l4c2VyRHc"
       },
-      "join": {
-        "featureProperty": "code",
-        "dataKey": "code",
-        "dataValue": "births1000"
-      },
+      "dataColumn": "births1000",
       "colorRange": {
         "min": {"color": "#858", "value": 5},
         "max": {"color": "#8f8", "value": 15}

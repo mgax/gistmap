@@ -10,11 +10,7 @@
           "type": "googleSpreadsheet",
           "key": "0AlBmcLkxpBOXdEdOVUdCY2hqN2ExRmRtdG13SUNSQnc"
       },
-      "join": {
-        "featureProperty": "code",
-        "dataKey": "code",
-        "dataValue": "value"
-      },
+      "dataColumn": "value",
       "colorRange": {
         "min": {"color": "#858", "value": 5},
         "max": {"color": "#8f8", "value": 15}
