@@ -179,13 +179,13 @@
 
       var providerMap = {
         gist: function(args) {
-          configFromGist(args.gist, function(config) {
+          configFromGist(args.gist[0], function(config) {
             renderMap(config);
           });
         },
 
         path: function(args) {
-          $.getJSON(args.path, function(config) {
+          $.getJSON(args.path[0], function(config) {
             renderMap(config);
           });
         }
