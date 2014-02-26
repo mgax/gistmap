@@ -121,35 +121,30 @@
       }
 
       var providerMap = {
-        gist: function(options) {
-          configFromGist(options.id, function(config) {
+        gist: function(args) {
+          configFromGist(args.gist, function(config) {
             renderMap(config);
           });
         },
 
-        path: function(options) {
-          $.getJSON(options.path, function(config) {
+        path: function(args) {
+          $.getJSON(args.path, function(config) {
             renderMap(config);
           });
         }
       };
 
       function loadConfig() {
-        var source = parseQueryString(window.location.search);
-        if(source && providerMap[source.provider]) {
-          providerMap[source.provider](source);
+        var args = parseQueryString(window.location.search.substr(1));
+        if(args.gist) {
+          providerMap.gist(args);
+        }
+        else if(args.path) {
+          providerMap.path(args);
         }
         else {
-          console.log("Could not match a provider");
+          console.log("Could not match a provider", args);
         }
-      }
-
-      function parseQueryString(queryString) {
-        var gistMatch = queryString.match(/^\?gist=(.+)$/);
-        if(gistMatch) { return {provider: 'gist', id: gistMatch[1]}; }
-        var pathMatch = queryString.match(/^\?path=(.+)$/);
-        if(pathMatch) { return {provider: 'path', path: pathMatch[1]}; }
-        return null;
       }
 
       function configFromGist(id, callback) {
@@ -161,6 +156,16 @@
             callback(JSON.parse(resp.data.files['map.json'].content));
           }
         });
+      }
+
+      function parseQueryString(queryString) {
+        var rv = {};
+        _.forEach(queryString.split('&'), function(pair) {
+          var key = decodeURIComponent(pair.split('=')[0]);
+          var value = decodeURIComponent(pair.split('=')[1]);
+          (rv[key] = rv[key] || []).push(value);
+        });
+        return rv;
       }
 
       loadConfig();
