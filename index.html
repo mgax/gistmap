@@ -178,6 +178,13 @@
                     bounds.extend(latLng);
                   }
                   circle.addTo(map);
+
+                  circle.on('click', function(evt) {
+                    var properties = feature.properties;
+                    var code = properties.id;
+                    var html = renderPropertiesTable(data[code]);
+                    L.popup().setLatLng(latLng).setContent(html).openOn(map);
+                  });
                 }
               });
               map.fitBounds(bounds);
