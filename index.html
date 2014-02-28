@@ -106,10 +106,9 @@
       }
 
       var layerRender = {
-        osm: function(map) {
-          L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; <a href="http://osm.org/copyright">' +
-                           'OpenStreetMap</a> contributors'
+        tiles: function(map, layerConfig) {
+          L.tileLayer(layerConfig.src, {
+              attribution: layerConfig.attribution
           }).addTo(map);
         },
 
