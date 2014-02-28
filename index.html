@@ -146,8 +146,19 @@
           getData(layerConfig.data, function(resp) {
             data = resp;
             fetchJson(layerConfig.features, function(resp) {
-              var coll = topojson.feature(resp, _.values(resp.objects)[0]);
-              layer.addData(coll.features);
+              var features;
+              if(resp.type == 'FeatureCollection') {
+                  features = resp.features;
+              }
+              else if(resp.type == 'Topology') {
+                  var respLayer = _.values(resp.objects)[0];
+                  features = topojson.feature(resp, respLayer).features;
+              }
+              else {
+                  console.log("Unknown document type", layerConfig.features);
+                  return;
+              }
+              layer.addData(features);
               map.fitBounds(layer.getBounds());
             });
           });
