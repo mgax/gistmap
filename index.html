@@ -124,7 +124,7 @@
             style: function(feature) {
               var code = feature.properties.id;
               var row = data[code] || {};
-              var value = parseFloat(row[layerConfig.dataColumn]);
+              var value = parseFloat(row[layerConfig.dataColumn || 'value']);
               return {
                 weight: 1,
                 fillColor: color(value),
@@ -172,7 +172,7 @@
               _.forEach(resp.features, function(feature) {
                 var id = feature.properties.id;
                 if(data[id]) {
-                  var value = data[id][layerConfig.dataColumn];
+                  var value = data[id][layerConfig.dataColumn || 'value'];
                   var radius = 50000 * layerConfig.scale * Math.sqrt(value);
                   var coord = feature.geometry.coordinates;
                   var latLng = L.latLng([coord[1], coord[0]]);
