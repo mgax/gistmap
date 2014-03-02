@@ -13,8 +13,8 @@
           "key": "0AlBmcLkxpBOXdEEzSE1HWTdWeGYxTG9ja0l4c2VyRHc"
       },
       "colorRange": {
-        "min": {"color": "#858", "value": 5},
-        "max": {"color": "#8f8", "value": 15}
+        "min": {"color": "#aaa", "value": 7},
+        "max": {"color": "#038", "value": 12}
       }
     }
   ]
