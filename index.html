@@ -173,15 +173,22 @@
 
         bubble: function(map, layerConfig) {
           var color = layerConfig.color || '#008';
+          var getValue = function(row) {
+            return parseFloat(row[layerConfig.dataColumn || 'value']);
+          }
           getData(layerConfig.data, function(resp) {
             var data = resp;
             var bounds = null;
+            var rangeMax = 5000 * 1000 * 1000;  // 5000 square km
             fetchJson(layerConfig.features, function(resp) {
+              var scale = d3.scale.linear()
+                .domain([0, d3.max(_.values(data), getValue)])
+                .range([0, rangeMax]);
               _.forEach(resp.features, function(feature) {
                 var id = feature.properties.id;
                 if(data[id]) {
-                  var value = data[id][layerConfig.dataColumn || 'value'];
-                  var radius = 50000 * layerConfig.scale * Math.sqrt(value);
+                  var value = getValue(data[id]);
+                  var radius = Math.sqrt(scale(value) / Math.PI);
                   var coord = feature.geometry.coordinates;
                   var latLng = L.latLng([coord[1], coord[0]]);
                   var circle = L.circle(latLng, radius, {
