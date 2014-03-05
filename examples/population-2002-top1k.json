@@ -9,7 +9,6 @@
       "type": "bubble",
       "features": "https://dl.dropboxusercontent.com/s/3718h4vi5bk5alm/localitati.geojson",
       "data": "https://docs.google.com/spreadsheet/ccc?key=0AlBmcLkxpBOXdEZHd05HOGRzU3d6OHk4MG00RV9ySVE&usp=drive_web#gid=0",
-      "dataColumn": "population2002",
       "scale": 0.001
     }
   ]
