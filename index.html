@@ -107,6 +107,22 @@
           }).addTo(map);
         },
 
+        background: function(map, layerConfig) {
+          function tileLayer(src, attribution) {
+            L.tileLayer(src, {attribution: attribution}).addTo(map);
+          }
+          if(layerConfig.source == 'osm') {
+            tileLayer(
+              "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+              "&copy; <a href=\"http://osm.org/copyright\">" +
+                  "OpenStreetMap</a> contributors"
+            );
+          }
+          else {
+            console.log("Unknown background tile source", layerConfig.source);
+          }
+        },
+
         choropleth: function(map, layerConfig) {
           var layer = L.geoJson();
           layer.addTo(map);
