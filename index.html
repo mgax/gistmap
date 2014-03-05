@@ -172,6 +172,7 @@
         },
 
         bubble: function(map, layerConfig) {
+          var color = layerConfig.color || '#008';
           getData(layerConfig.data, function(resp) {
             var data = resp;
             var bounds = null;
@@ -185,8 +186,8 @@
                   var latLng = L.latLng([coord[1], coord[0]]);
                   var circle = L.circle(latLng, radius, {
                     weight: 1,
-                    color: layerConfig.color,
-                    fillColor: layerConfig.color
+                    color: color,
+                    fillColor: color
                   });
                   if(! bounds) {
                     bounds = L.latLngBounds([latLng, latLng]);
