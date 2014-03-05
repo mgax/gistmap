@@ -84,25 +84,20 @@
         });
       }
 
-      var dataType = {
-          googleSpreadsheet: function(dataConfig, callback) {
-            fetchGoogleSpreadsheet(dataConfig.key, function(row_list) {
-              var data = {};
-              _.forEach(row_list, function(row) {
-                var key = row.id;
-                data[key] = row;
-              });
-              callback(data);
-            });
-          }
-      };
-
       function getData(dataConfig, callback) {
-        var dataHandler = dataType[dataConfig.type];
-        if(! dataHandler) {
+        if(dataConfig.indexOf('//docs.google.com/spreadsheet/') > -1) {
+          fetchGoogleSpreadsheet(dataConfig, function(row_list) {
+            var data = {};
+            _.forEach(row_list, function(row) {
+              var key = row.id;
+              data[key] = row;
+            });
+            callback(data);
+          });
+        }
+        else {
           console.log("Unknown data source", dataConfig.type);
         }
-        dataHandler(dataConfig, callback);
       }
 
       var layerRender = {
