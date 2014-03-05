@@ -135,7 +135,6 @@
               var colorRange = layerConfig.colorRange;
               if(! colorRange) {
                 var extent = d3.extent(_.values(data), getValue);
-                console.log(extent);
                 colorRange = {
                   min: {color: "#aaa", value: extent[0]},
                   max: {color: "#038", value: extent[1]}
