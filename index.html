@@ -108,38 +108,11 @@
         },
 
         choropleth: function(map, layerConfig) {
-          var colorRange = layerConfig.colorRange;
-          var color = d3.scale.linear()
-              .domain([colorRange.min.value, colorRange.max.value])
-              .range([colorRange.min.color, colorRange.max.color])
-              .interpolate(d3.interpolateLab);
-          var data;
-
-          var layer = L.geoJson([], {
-            style: function(feature) {
-              var code = feature.properties.id;
-              var row = data[code] || {};
-              var value = parseFloat(row[layerConfig.dataColumn || 'value']);
-              return {
-                weight: 1,
-                fillColor: color(value),
-                fillOpacity: 0.5
-              };
-            }
-          });
-
-          layer.on('click', function(evt) {
-            var properties = evt.layer.feature.properties;
-            var code = properties.id;
-            var html = renderPropertiesTable(data[code]);
-            var latlng = evt.layer.getBounds().getCenter();
-            L.popup().setLatLng(latlng).setContent(html).openOn(map);
-          });
-
+          var layer = L.geoJson();
           layer.addTo(map);
 
           getData(layerConfig.data, function(resp) {
-            data = resp;
+            var data = resp;
             fetchJson(layerConfig.features, function(resp) {
               var features;
               if(resp.type == 'FeatureCollection') {
@@ -153,6 +126,32 @@
                   console.log("Unknown document type", layerConfig.features);
                   return;
               }
+
+              var colorRange = layerConfig.colorRange;
+              var color = d3.scale.linear()
+                  .domain([colorRange.min.value, colorRange.max.value])
+                  .range([colorRange.min.color, colorRange.max.color])
+                  .interpolate(d3.interpolateLab);
+
+              layer.options.style = function(feature) {
+                var code = feature.properties.id;
+                var row = data[code] || {};
+                var value = parseFloat(row[layerConfig.dataColumn || 'value']);
+                return {
+                  weight: 1,
+                  fillColor: color(value),
+                  fillOpacity: 0.5
+                };
+              };
+
+              layer.on('click', function(evt) {
+                var properties = evt.layer.feature.properties;
+                var code = properties.id;
+                var html = renderPropertiesTable(data[code]);
+                var latlng = evt.layer.getBounds().getCenter();
+                L.popup().setLatLng(latlng).setContent(html).openOn(map);
+              });
+
               layer.addData(features);
               map.fitBounds(layer.getBounds());
             });
