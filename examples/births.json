@@ -8,11 +8,7 @@
     {
       "type": "choropleth",
       "features": "https://dl.dropboxusercontent.com/s/qsg4n1kg8bkqfhi/judete.topojson",
-      "data": "https://docs.google.com/spreadsheet/ccc?key=0AlBmcLkxpBOXdEEzSE1HWTdWeGYxTG9ja0l4c2VyRHc&usp=drive_web#gid=0",
-      "colorRange": {
-        "min": {"color": "#aaa", "value": 7},
-        "max": {"color": "#038", "value": 12}
-      }
+      "data": "https://docs.google.com/spreadsheet/ccc?key=0AlBmcLkxpBOXdEEzSE1HWTdWeGYxTG9ja0l4c2VyRHc&usp=drive_web#gid=0"
     }
   ]
 }

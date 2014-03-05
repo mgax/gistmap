@@ -9,11 +9,7 @@
       "type": "choropleth",
       "features": "https://dl.dropboxusercontent.com/s/mfgboa9jtnxkkt0/uat.topojson",
       "data": "https://docs.google.com/spreadsheet/ccc?key=0AlBmcLkxpBOXdEdOVUdCY2hqN2ExRmRtdG13SUNSQnc&usp=drive_web#gid=0",
-      "dataColumn": "value",
-      "colorRange": {
-        "min": {"color": "#858", "value": 5},
-        "max": {"color": "#8f8", "value": 15}
-      }
+      "dataColumn": "value"
     }
   ]
 }
