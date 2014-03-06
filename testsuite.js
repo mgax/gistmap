@@ -1,3 +1,7 @@
+(function() {
+'use strict';
+
+
 describe("parseQueryString", function() {
   it("parses an empty string", function() {
     expect(M.parseQueryString("")).toEqual({});
@@ -31,3 +35,6 @@ describe("layerRender.tiles", function() {
     expect(layer.options.attribution).toEqual('bar');
   });
 });
+
+
+})();
