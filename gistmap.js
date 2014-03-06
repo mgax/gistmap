@@ -281,7 +281,7 @@
     _.forEach(queryString.split('&'), function(pair) {
       var key = decodeURIComponent(pair.split('=')[0]);
       var value = decodeURIComponent(pair.split('=')[1]);
-      (rv[key] = rv[key] || []).push(value);
+      if(key) { (rv[key] = rv[key] || []).push(value); }
     });
     return rv;
   };
