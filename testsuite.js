@@ -20,3 +20,14 @@ describe("parseQueryString", function() {
     expect(M.parseQueryString("===")).toEqual({});
   });
 });
+
+
+describe("layerRender.tiles", function() {
+  it("creates a tiles layer", function() {
+    var map = L.map($('<div>')[0]);
+    M.layerRender.tiles(map, {src: 'foo', attribution: 'bar'});
+    var layer = _.values(map._layers)[0];
+    expect(layer._url).toEqual('foo');
+    expect(layer.options.attribution).toEqual('bar');
+  });
+});
