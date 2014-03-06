@@ -37,4 +37,15 @@ describe("layerRender.tiles", function() {
 });
 
 
+describe("layerRender.background", function() {
+  it("creates an OSM layer", function() {
+    var map = L.map($('<div>')[0]);
+    M.layerRender.background(map, {source: 'osm'});
+    var layer = _.values(map._layers)[0];
+    expect(layer._url).toContain('http://{s}.tile.osm.org/{z}/{x}/{y}.png');
+    expect(layer.options.attribution).toContain('http://osm.org/copyright');
+  });
+});
+
+
 })();
