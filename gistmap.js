@@ -1,4 +1,4 @@
-(function() {
+(function(M) {
   'use strict';
 
   var editor = null;
@@ -286,5 +286,8 @@
     return rv;
   }
 
-  loadConfig();
-})();
+  M.main = function() {
+    loadConfig();
+  };
+
+})(window.M = {});
