@@ -237,8 +237,7 @@
     }
   };
 
-  M.loadConfig = function(callback) {
-    var args = M.parseQueryString(window.location.search.substr(1));
+  M.loadConfig = function(args, callback) {
     if(args.gist) {
       M.configLoader.gist(args, callback);
     }
@@ -287,7 +286,8 @@
   };
 
   M.main = function() {
-    M.loadConfig(M.renderMap);
+    var args = M.parseQueryString(window.location.search.substr(1));
+    M.loadConfig(args, M.renderMap);
   };
 
 })(window.M = {});
