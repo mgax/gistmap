@@ -225,7 +225,7 @@
 
   M.configLoader = {
     gist: function(args, callback) {
-      configFromGist(args.gist[0], function(config) {
+      M.configFromGist(args.gist[0], function(config) {
         callback(config);
       });
     },
