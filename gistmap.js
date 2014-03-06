@@ -223,27 +223,27 @@
     });
   };
 
-  M.providerMap = {
-    gist: function(args) {
+  M.configLoader = {
+    gist: function(args, callback) {
       configFromGist(args.gist[0], function(config) {
-        M.renderMap(config);
+        callback(config);
       });
     },
 
-    path: function(args) {
+    path: function(args, callback) {
       $.getJSON(args.path[0], function(config) {
-        M.renderMap(config);
+        callback(config);
       });
     }
   };
 
-  M.loadConfig = function() {
+  M.loadConfig = function(callback) {
     var args = M.parseQueryString(window.location.search.substr(1));
     if(args.gist) {
-      M.providerMap.gist(args);
+      M.configLoader.gist(args, callback);
     }
     else if(args.path) {
-      M.providerMap.path(args);
+      M.configLoader.path(args, callback);
     }
     else {
       console.log("Could not match a provider", args);
@@ -287,7 +287,7 @@
   };
 
   M.main = function() {
-    M.loadConfig();
+    M.loadConfig(M.renderMap);
   };
 
 })(window.M = {});
