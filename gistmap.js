@@ -5,7 +5,7 @@
   var map = null;
   var cache = {};
 
-  function renderPropertiesTable(properties) {
+  M.renderPropertiesTable = function(properties) {
     var table = $('<table class="properties">');
     _.forEach(properties, function(value, key) {
       $('<tr>').appendTo(table).append(
@@ -14,9 +14,9 @@
       );
     });
     return $('<div>').append(table).html();
-  }
+  };
 
-  function fetchGoogleSpreadsheet(key, callback) {
+  M.fetchGoogleSpreadsheet = function(key, callback) {
     var cacheKey = 'tabletop-' + key;
     if(cache[cacheKey]) { callback(cache[cacheKey]); return; }
     Tabletop.init({
@@ -27,18 +27,18 @@
         callback(data);
       }
     });
-  }
+  };
 
-  function fetchJson(url, callback) {
+  M.fetchJson = function(url, callback) {
     var cacheKey = 'json-' + url;
     if(cache[cacheKey]) { callback(cache[cacheKey]); return; }
     $.getJSON(url, function(data) {
       cache[cacheKey] = data;
       callback(data);
     });
-  }
+  };
 
-  function fetchGist(id, callback) {
+  M.fetchGist = function(id, callback) {
     var cacheKey = 'gist-' + id;
     if(cache[cacheKey]) { callback(cache[cacheKey]); return; }
     $.ajax({
@@ -50,11 +50,11 @@
         callback(data);
       }
     });
-  }
+  };
 
-  function getData(dataConfig, callback) {
+  M.getData = function(dataConfig, callback) {
     if(dataConfig.indexOf('//docs.google.com/spreadsheet/') > -1) {
-      fetchGoogleSpreadsheet(dataConfig, function(row_list) {
+      M.fetchGoogleSpreadsheet(dataConfig, function(row_list) {
         var data = {};
         _.forEach(row_list, function(row) {
           var key = row.id;
@@ -66,9 +66,9 @@
     else {
       console.log("Unknown data source", dataConfig.type);
     }
-  }
+  };
 
-  var layerRender = {
+  M.layerRender = {
     tiles: function(map, layerConfig) {
       L.tileLayer(layerConfig.src, {
           attribution: layerConfig.attribution
@@ -95,9 +95,9 @@
       var layer = L.geoJson();
       layer.addTo(map);
 
-      getData(layerConfig.data, function(resp) {
+      M.getData(layerConfig.data, function(resp) {
         var data = resp;
-        fetchJson(layerConfig.features, function(resp) {
+        M.fetchJson(layerConfig.features, function(resp) {
           var features;
 
           var getValue = function(row) {
@@ -143,7 +143,7 @@
           layer.on('click', function(evt) {
             var properties = evt.layer.feature.properties;
             var code = properties.id;
-            var html = renderPropertiesTable(data[code]);
+            var html = M.renderPropertiesTable(data[code]);
             var latlng = evt.layer.getBounds().getCenter();
             L.popup().setLatLng(latlng).setContent(html).openOn(map);
           });
@@ -159,11 +159,11 @@
       var getValue = function(row) {
         return parseFloat(row[layerConfig.dataColumn || 'value']);
       }
-      getData(layerConfig.data, function(resp) {
+      M.getData(layerConfig.data, function(resp) {
         var data = resp;
         var bounds = null;
         var rangeMax = 5000 * 1000 * 1000;  // 5000 square km
-        fetchJson(layerConfig.features, function(resp) {
+        M.fetchJson(layerConfig.features, function(resp) {
           var scale = d3.scale.linear()
             .domain([0, d3.max(_.values(data), getValue)])
             .range([0, rangeMax]);
@@ -190,7 +190,7 @@
               circle.on('click', function(evt) {
                 var properties = feature.properties;
                 var code = properties.id;
-                var html = renderPropertiesTable(data[code]);
+                var html = M.renderPropertiesTable(data[code]);
                 L.popup().setLatLng(latLng).setContent(html).openOn(map);
               });
             }
@@ -201,7 +201,7 @@
     }
   };
 
-  function renderMap(config) {
+  M.renderMap = function(config) {
     if(editor) {
       editor.setValue(JSON.stringify(config, null, '  '));
     }
@@ -213,7 +213,7 @@
     map = L.map('map');
 
     _.forEach(config.layers, function(layerConfig) {
-      var renderFunction = layerRender[layerConfig.type];
+      var renderFunction = M.layerRender[layerConfig.type];
       if(renderFunction) {
         renderFunction(map, layerConfig);
       }
@@ -221,39 +221,39 @@
         console.log("Unknown layer type", layerConfig.type);
       }
     });
-  }
+  };
 
-  var providerMap = {
+  M.providerMap = {
     gist: function(args) {
       configFromGist(args.gist[0], function(config) {
-        renderMap(config);
+        M.renderMap(config);
       });
     },
 
     path: function(args) {
       $.getJSON(args.path[0], function(config) {
-        renderMap(config);
+        M.renderMap(config);
       });
     }
   };
 
-  function loadConfig() {
-    var args = parseQueryString(window.location.search.substr(1));
+  M.loadConfig = function() {
+    var args = M.parseQueryString(window.location.search.substr(1));
     if(args.gist) {
-      providerMap.gist(args);
+      M.providerMap.gist(args);
     }
     else if(args.path) {
-      providerMap.path(args);
+      M.providerMap.path(args);
     }
     else {
       console.log("Could not match a provider", args);
     }
     if(args.devel) {
-      createDevelMenu();
+      M.createDevelMenu();
     }
-  }
+  };
 
-  function createDevelMenu() {
+  M.createDevelMenu = function() {
     $('body').addClass('devel');
     editor = CodeMirror($('#devel-code')[0], {mode: "application/json"});
     $('#devel-apply').click(function(evt) {
@@ -266,17 +266,17 @@
         return;
       }
       $('#devel-message').text('');
-      renderMap(config);
+      M.renderMap(config);
     });
-  }
+  };
 
-  function configFromGist(id, callback) {
-    fetchGist(id, function(gist) {
+  M.configFromGist = function(id, callback) {
+    M.fetchGist(id, function(gist) {
       callback(JSON.parse(gist.data.files['map.json'].content));
     });
-  }
+  };
 
-  function parseQueryString(queryString) {
+  M.parseQueryString = function(queryString) {
     var rv = {};
     _.forEach(queryString.split('&'), function(pair) {
       var key = decodeURIComponent(pair.split('=')[0]);
@@ -284,10 +284,10 @@
       (rv[key] = rv[key] || []).push(value);
     });
     return rv;
-  }
+  };
 
   M.main = function() {
-    loadConfig();
+    M.loadConfig();
   };
 
 })(window.M = {});
